@@ -9,10 +9,9 @@ function App() {
   const [activeTab, setActiveTab] = useState('citizen');
 
   return (
-    <div className="min-h-screen flex flex-col h-screen overflow-hidden">
+    <div className="min-h-screen flex flex-col h-screen overflow-hidden bg-slate-50 text-slate-900">
       <Navbar activeTab={activeTab} setActiveTab={setActiveTab} />
-      
-      <main className="flex-1 p-6 overflow-y-auto">
+      <main className="flex-1 p-6 overflow-y-auto bg-slate-50">
         {activeTab === 'citizen' && <ReportForm />}
         {activeTab === 'public_map' && <PublicMap />}
         {activeTab === 'camp_admin' && <AdminDashboard />}
