@@ -144,7 +144,8 @@ export default function ReportForm() {
           resident_name: formData.resident_name,
           tent_number: formData.tent_number,
           raw_input: text,
-          category: 'AI_AUTONOMOUS'
+          category: 'AI_AUTONOMOUS',
+          review_status: 'PENDING_REVIEW'
         })
       });
 
@@ -205,28 +206,6 @@ export default function ReportForm() {
     } finally {
       setIsTracking(false);
     }
-  };
-
-  const getTimelineSteps = (status, govtStatus) => {
-    const steps = [
-      { id: 'submitted', label: 'Report Logged', icon: <FileText size={16} />, active: true },
-      { id: 'admin', label: 'Admin Reviewed', icon: <Search size={16} />, active: ['APPROVED_PUBLIC', 'ESCALATED_GOVT', 'FULFILLED'].includes(status) },
-      { id: 'action', label: 'Action Initiated', icon: <Send size={16} />, active: ['APPROVED_PUBLIC', 'ESCALATED_GOVT', 'FULFILLED'].includes(status) },
-      { id: 'resolved', label: 'Resolved / Fulfilled', icon: <CheckCircle2 size={16} />, active: status === 'FULFILLED' }
-    ];
-
-    if (status === 'ESCALATED_GOVT') {
-      steps[2] = { id: 'action', label: 'Escalated to State', icon: <AlertTriangle size={16} className="text-amber-500" />, active: true };
-      if (govtStatus === 'RESOLVED_GOVT' || govtStatus === 'RESOLVED') {
-        steps[3] = { id: 'resolved', label: 'State Deployed Aid', icon: <CheckCircle size={16} className="text-emerald-600" />, active: true };
-      }
-    }
-
-    if (status === 'APPROVED_PUBLIC') {
-      steps[2] = { id: 'action', label: 'Public Map Pledged', icon: <MapPin size={16} className="text-indigo-600" />, active: true };
-    }
-
-    return steps;
   };
 
   if (isSubmitted) {
@@ -447,30 +426,6 @@ export default function ReportForm() {
               <span className="text-xs font-mono text-slate-600 bg-white px-3 py-1 rounded-lg border border-slate-200 shadow-xs">
                 Date Logged: {new Date(trackingResult.created_at).toLocaleDateString()}
               </span>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              {getTimelineSteps(trackingResult.review_status, trackingResult.govt_status).map((step, index) => (
-                <div key={step.id} className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs flex items-start gap-3">
-                  <div
-                    className={`flex items-center justify-center w-8 h-8 rounded-full border-2 shrink-0 ${
-                      step.active
-                        ? 'border-indigo-600 bg-indigo-600 text-white shadow-xs'
-                        : 'border-slate-300 bg-slate-100 text-slate-400'
-                    }`}
-                  >
-                    {step.icon}
-                  </div>
-                  <div>
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
-                      Step {index + 1}
-                    </span>
-                    <h5 className={`font-bold text-xs mt-0.5 ${step.active ? 'text-slate-900' : 'text-slate-400'}`}>
-                      {step.label}
-                    </h5>
-                  </div>
-                </div>
-              ))}
             </div>
           </div>
         ) : (

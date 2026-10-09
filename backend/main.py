@@ -151,19 +151,19 @@ def ingest_report(report: ReportIngest):
         raw_content = completion.choices[0].message.content
         ai_data = json.loads(raw_content)
 
-        # DETERMINISTIC OVERRIDE: Prioritize categories cleanly with explicit sanitation terms
+        # DETERMINISTIC OVERRIDE: Prioritize Sanitation & Medical checks FIRST before food substring matches
         specific_lower = ai_data.get("specific_item", "").lower()
         raw_input_lower = report.raw_input.lower()
         combined_text = f"{specific_lower} {raw_input_lower}"
         
-        if any(w in combined_text for w in ["rice", "cheng", "food", "potato", "dal", "vegetable", "cang", "chng", "mongi", "chakkang"]):
-            general_cat = "Food"
+        if any(w in combined_text for w in ["latrin", "latrine", "toilet", "bathroom", "washroom", "sanitation", "ishing", "water", "wash", "drain", "sewage"]):
+            general_cat = "Sanitation"
         elif any(w in combined_text for w in ["doctor", "medicine", "hidak", "naba", "vaccination", "health", "medical", "dengue", "sick", "fever", "leina"]):
             general_cat = "Medical"
         elif any(w in combined_text for w in ["blanket", "jacket", "winter", "phurit", "phiron", "kompor", "kampor", "warm"]):
             general_cat = "Winter Wear"
-        elif any(w in combined_text for w in ["latrin", "latrine", "toilet", "bathroom", "washroom", "sanitation", "ishing", "water", "wash", "drain", "sewage"]):
-            general_cat = "Sanitation"
+        elif any(w in combined_text for w in ["rice", "cheng", "food", "potato", "dal", "vegetable", "cang", "mongi", "chakkang"]):
+            general_cat = "Food"
         else:
             ai_gen = ai_data.get("general_category", "Food")
             general_cat = ai_gen if ai_gen in ["Food", "Winter Wear", "Medical", "Sanitation"] else "Food"
